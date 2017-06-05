@@ -1,0 +1,7 @@
+<div class="form-group col-md-12">
+    <label class="form-label">Filter fields (leave unselected for *)</label>
+    <div class="form-group">
+        <ss-multiselect-dropdown [options]="fieldList" [texts]="texts" [settings]="settings" [(ngModel)]="optionsModel"></ss-multiselect-dropdown>
+        <button (click)="refreshFilters()" class="btn btn-default glyphicon glyphicon-refresh" style="margin-top: -4px;" data-toggle="tooltip" title="refresh"></button>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+<div class="form-group col-md-12">
+    <label *ngIf="showLabel" class="form-label">Field list (leave unselected for *)</label>
+    <div class="form-group">
+        <ss-multiselect-dropdown *ngIf="fieldList" [options]="fieldList" [texts]="texts" [settings]="settings" 
+        [(ngModel)]="optionsModel" (onAdded)="selectionChanged()" (onRemoved)="selectionChanged()" style="min-width: 200px"></ss-multiselect-dropdown>
+        <button (click)="refreshFieldList()" class="btn btn-default glyphicon glyphicon-refresh" style="margin-top: -4px;" data-toggle="tooltip" title="refresh"></button>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{83F7C1C6-2E17-4B24-915D-ECBC51188C20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrSimpleQuery.Tests", "Tests\SolrSimpleQuery.Tests\SolrSimpleQuery.Tests.csproj", "{602D735F-BBBC-4652-A3B8-56C74AFC86DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrSimpleQuery", "SolrSimpleQuery\SolrSimpleQuery.csproj", "{6A998FCA-7ED1-40AE-914D-61205617508E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolrSimpleQuery.Api", "SolrSimpleQuery.Api\SolrSimpleQuery.Api.csproj", "{F5560AF8-2918-4D2C-8470-83AFEFFCA14B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{602D735F-BBBC-4652-A3B8-56C74AFC86DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{602D735F-BBBC-4652-A3B8-56C74AFC86DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{602D735F-BBBC-4652-A3B8-56C74AFC86DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{602D735F-BBBC-4652-A3B8-56C74AFC86DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A998FCA-7ED1-40AE-914D-61205617508E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A998FCA-7ED1-40AE-914D-61205617508E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A998FCA-7ED1-40AE-914D-61205617508E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A998FCA-7ED1-40AE-914D-61205617508E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5560AF8-2918-4D2C-8470-83AFEFFCA14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5560AF8-2918-4D2C-8470-83AFEFFCA14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5560AF8-2918-4D2C-8470-83AFEFFCA14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5560AF8-2918-4D2C-8470-83AFEFFCA14B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{602D735F-BBBC-4652-A3B8-56C74AFC86DA} = {83F7C1C6-2E17-4B24-915D-ECBC51188C20}
+	EndGlobalSection
+EndGlobal

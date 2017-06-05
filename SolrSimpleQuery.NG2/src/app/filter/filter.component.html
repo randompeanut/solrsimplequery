@@ -1,0 +1,54 @@
+<div class="form-group col-md-12">
+    <div class="form-group col-md-2">
+        <div style="font-weight: bold">Facet</div>
+        <button (click)="doQuery(true)" class="btn btn-default glyphicon glyphicon-filter" style="margin-bottom: 4px; width: 100px;" data-toggle="tooltip" title="query solr"></button>
+    </div>
+    <div class="form-group col-md-3">
+        <div style="font-weight: bold">Field</div>
+        <ss-multiselect-dropdown [options]="availableFields" [texts]="texts" [settings]="settings" 
+            [(ngModel)]="facetOptionsmodel" name="facetOptionsmodel">
+        </ss-multiselect-dropdown>
+    </div>
+    <div class="form-group col-md-3">
+        <div style="font-weight: bold">Facet results</div>
+        <ss-multiselect-dropdown [options]="facetResults" [texts]="texts" [settings]="settings" 
+            [(ngModel)]="facetResultsmodel" name="facetResultsmodel">
+        </ss-multiselect-dropdown>
+    </div>
+</div>
+
+<div class="form-group col-md-12">
+    <div class="form-group col-md-2">
+        <div style="font-weight: bold">Filter</div>
+        <button (click)="doQuery()" class="btn btn-default glyphicon glyphicon-filter" style="margin-bottom: 4px; width: 100px;" data-toggle="tooltip" title="query solr"></button>
+    </div>
+    <div class="form-group col-md-2">
+        <div style="font-weight: bold">Filters</div>
+        <button (click)="addFilter()" class="btn btn-default glyphicon glyphicon-plus" style="margin-bottom: 4px; width: 100px;" data-toggle="tooltip" title="add filter"></button>
+    </div>
+    <div class="form-group col-md-3">
+        <div style="font-weight: bold">Identifier</div>
+        <ss-multiselect-dropdown [options]="availableFields" [texts]="texts" [settings]="settings" 
+            [(ngModel)]="optionsModel" name="optionsmodel" (onAdded)="fieldUpdatedAdded()"
+            (onRemoved)="fieldUpdatedRemoved()">
+        </ss-multiselect-dropdown>
+    </div>
+    <div class="form-group col-md-3">
+        <div style="font-weight: bold">Sort by</div>
+        <ss-multiselect-dropdown [options]="availableFields" [texts]="texts" [settings]="settings" 
+            [(ngModel)]="sortByOptionsmodel" name="sortByOptionsmodel">
+        </ss-multiselect-dropdown>
+    </div>
+    <div class="form-group col-md-2">
+        <div style="font-weight: bold">Sort by order</div>
+        <select class="form-control" [(ngModel)]="sortBy" name="sortby" style="width: 110px;">
+            <option>Asc</option>
+            <option>Desc</option>
+        </select>
+    </div>
+</div>
+<div class="form-group col-md-12">
+    <div *ngFor="let filter of sessionStateService.filters">
+        <filteredit [filter]="filter" [id]="(filter.id)" (filterRemoved)="filterRemoved(filter.id)"></filteredit>
+    </div>
+</div>

@@ -1,0 +1,1 @@
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="SolrSimpleQuery.Api.WebApiApplication" Language="C#" %>

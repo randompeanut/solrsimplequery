@@ -1,0 +1,25 @@
+<div class="form-group col-md-6">
+	<label control-label col-sm-2>Api endpoint url</label>
+	<input type="text" [(ngModel)] = "this.sessionStateService.selectedApiEndPoint" (change)="emitSettingsChangedEvent()" class="form-control"/>
+</div>
+<div class="form-group col-md-6">
+	<label control-label col-sm-2>Solr endpoint url</label>
+	<select class="form-control" (change)="indexerEndPointUpdated($event)">
+		<option *ngFor="let item of indexerEndPoints" (selected)="this.sessionStateService.selectedIndexerEndPoint" >{{item}}</option>
+	</select>
+</div>
+<div class="form-group col-md-2">
+	<label control-label>Solr channel</label>
+	<select class="form-control" (change)="indexerChannelUpdated($event)">
+		<option *ngFor="let item of indexerChannels" (selected)="this.sessionStateService.selectedIndexerChannel">{{item}}</option>
+	</select>
+</div>  
+<div class="form-group col-md-2">
+	<label control-label>Rows</label>
+	<input type="text" [(ngModel)] = "this.sessionStateService.selectedRows" name="rows" class="form-control"/>
+</div>
+<div class="form-group col-md-2">
+	<label control-label>Start</label>
+	<input type="text" [(ngModel)] = "this.sessionStateService.selectedStart" name="start" class="form-control"/>
+</div>
+

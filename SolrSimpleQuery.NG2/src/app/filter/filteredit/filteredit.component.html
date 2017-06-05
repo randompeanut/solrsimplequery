@@ -1,0 +1,43 @@
+<div class="form-group col-md-12">
+    <div class="normaldiv">
+        <button (click)="removeFilter()" class="btn btn-default glyphicon glyphicon-remove" data-toggle="tooltip" title="remove filter"></button>
+    </div>
+    <div class="normaldiv">
+        <select class="form-control" [(ngModel)]="selectedFilterType" name="filtertype" (change)="filterTypeUpdated()">
+            <option>Simple</option>
+            <option>Simple range</option>
+            <option>Date range</option>
+        </select>
+    </div>
+    <div class="normaldiv">
+        <select *ngIf="showSimpleRange || showDateRange" class="form-control" [(ngModel)]="selectedRangeFilterType" name="rangeype" (change)="rangeFilterTypeUpdated()" style="width: 90px;">
+            <option>From</option>
+            <option>To</option>
+            <option>Range</option>
+        </select>
+    </div>
+    <div class="normaldiv">
+        <ss-multiselect-dropdown [options]="availableFields" [texts]="texts" [settings]="settings" 
+            [(ngModel)]="optionsModel" name="optionsmodel" (onAdded)="fieldUpdatedAdded()"
+            (onRemoved)="fieldUpdatedRemoved()" (selectionLimitReached)="fieldUpdatedAdded()">
+        </ss-multiselect-dropdown>
+    </div>
+    <div class="normaldiv">
+        <input *ngIf="selectedFieldSelected && showSimple" class="form-control" type="text" [(ngModel)]="selectedFieldFromValue" name="selectedfieldfromvalue"/>
+    </div>
+    <div class="normaldiv">
+        <input *ngIf="selectedFieldSelected && showSimpleRange" class="form-control" type="text" [(ngModel)]="selectedFieldFromValue" name="selectedfieldfromvalue"/>
+    </div>
+    <div class="normaldiv">
+        <ng2-datepicker *ngIf="selectedFieldSelected && showDateRange" [options]="options" [(ngModel)]="dateFrom" name="datefrom" class="form-control"></ng2-datepicker>
+    </div>
+    <div class="normaldiv paddedtext">
+        <label *ngIf="selectedFieldSelected && showToValue" class="form-label">to</label>
+    </div>
+    <div class="normaldiv">
+        <input *ngIf="selectedFieldSelected && showSimpleRange && showToValue" class="form-control" type="text" [(ngModel)]="selectedFieldToValue" name="selectedfieldvalue"/>
+    </div>
+    <div class="normaldiv">
+        <ng2-datepicker *ngIf="selectedFieldSelected && showDateRange && showToValue" [options]="options" [(ngModel)]="dateTo" name="datefrom" class="form-control"></ng2-datepicker>
+    </div>
+</div>

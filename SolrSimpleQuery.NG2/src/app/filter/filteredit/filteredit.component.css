@@ -1,0 +1,10 @@
+.normaldiv {
+    position: relative;
+    float: left;
+    padding-right: 2px;
+    vertical-align: middle;
+}
+
+.paddedtext {
+    padding-top: 7px;
+}

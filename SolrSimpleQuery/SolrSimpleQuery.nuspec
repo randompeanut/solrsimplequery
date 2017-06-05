@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Funda Real Estate B.V.</authors>
+    <owners>Funda Real Estate B.V.</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Initial package</description>
+    <releaseNotes>initial package</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>Lightweight Solr Query Engine</tags>
+  </metadata>
+</package>
