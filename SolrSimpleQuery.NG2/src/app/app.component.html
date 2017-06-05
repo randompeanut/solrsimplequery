@@ -18,6 +18,6 @@
         <filter></filter>
     </div>
     <div *ngIf="sessionStateService.queryResultJson" class="col-md-6 result-column">
-        <prettyjson [obj]="sessionStateService.queryResultJson" class="result-column"></prettyjson>
+        <json-formatter [json]="sessionStateService.queryResultJson" class="result-column"></json-formatter>
     </div>
 </form>

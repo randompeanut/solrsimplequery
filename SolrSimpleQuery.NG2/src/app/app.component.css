@@ -15,11 +15,10 @@ html, body {
 }
 
 .result-column {
-    height:100vh;
-    min-height: 100vh;
-    overflow-x: hidden; 
-    overflow-y:auto;
-    background-color: #CCCCCC;
+    height: 92vh;
+    min-height: 92vh;
+    overflow-x: auto; 
+    overflow-y: auto;
 }
 
 .app-header {
@@ -55,7 +54,7 @@ html, body {
 }
 
 .content-class {
-    background-color: #CCCCCC;
+    background-color: white;
 }
 
 ::-webkit-scrollbar {

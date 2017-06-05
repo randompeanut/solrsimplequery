@@ -14,7 +14,7 @@ import { FilterComponent } from './filter/filter.component';
 import { FilterEditComponent } from './filter/filteredit/filteredit.component';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect'
 import { DatePickerModule } from 'ng2-datepicker';
-import {PrettyJsonModule} from 'angular2-prettyjson';
+import { JsonFormatterModule } from './shared/formatter/json.formatter.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,7 @@ import {PrettyJsonModule} from 'angular2-prettyjson';
     ReactiveFormsModule,
     MultiselectDropdownModule,
     DatePickerModule,
-    PrettyJsonModule
+    JsonFormatterModule
   ],
   providers: [
     ApiHttp,
