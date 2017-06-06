@@ -27,6 +27,10 @@ export class JsonFormatterComponent implements OnChanges {
   ngOnChanges() {
     this.asset = [];
 
+    if (!this.json) {
+        return;
+    }
+
     // Do nothing without data
     if (typeof (this.json) !== 'object' && !Array.isArray(this.json)) {
       return;

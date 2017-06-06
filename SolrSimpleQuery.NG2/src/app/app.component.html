@@ -18,6 +18,17 @@
         <filter></filter>
     </div>
     <div *ngIf="sessionStateService.queryResultJson" class="col-md-6 result-column">
-        <json-formatter [json]="sessionStateService.queryResultJson" class="result-column"></json-formatter>
+        <div class="form-group col-md-12 top-spaced">
+            <select class="form-control" [(ngModel)]="jsonFormat" name="jsonFormat" style="width: 200px;">
+                <option>Raw</option>
+                <option>Formatted</option>
+            </select>
+            <div *ngIf="jsonFormat === 'Raw'" >
+                <prettyjson [obj]="sessionStateService.queryResultJson" class="result-column"></prettyjson>
+            </div>
+            <div  *ngIf="jsonFormat === 'Formatted'" >
+                <json-formatter [json]="sessionStateService.queryResultJson" class="result-column"></json-formatter>
+            </div>
+        </div>
     </div>
 </form>

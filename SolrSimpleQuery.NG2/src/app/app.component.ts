@@ -7,5 +7,8 @@ import {SessionStateService} from './shared/http/sessionstate.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(private sessionStateService: SessionStateService) {}
+  jsonFormat: string = "Raw";
+
+  constructor(private sessionStateService: SessionStateService) {}  
+
 }
