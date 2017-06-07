@@ -13,7 +13,7 @@ export class MetaService {
 	getAllIndexerEndPoints(): Promise <string[]> {
 		return this.apiHttp.get(this.sessionStateService.metaEndPoint + '/getAllIndexerEndPoints')
 		.map(res => res.json())
-		.toPromise();
+		.toPromise()
 	}
 
 	getAllIndexerChannels(): Promise <string[]> {

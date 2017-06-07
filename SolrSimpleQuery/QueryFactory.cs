@@ -104,11 +104,11 @@ namespace SolrSimpleQuery
                 foreach (var prop in row)
                     try
                     {
-                        if (filterCriteria.FieldList == null || filterCriteria.FieldList.Any(r => r == prop.Name))
-                        {
-                            var properties = ((JProperty) prop).Value.ToArray();
-                            resultPairs.Add(new DynamicResult(prop.Name, properties.Any() ? properties : prop.Value));
-                        }
+                        if (filterCriteria.FieldList != null && filterCriteria.FieldList.Any() &&
+                            filterCriteria.FieldList.All(r => r != prop.Name)) continue;
+
+                        var properties = ((JProperty) prop).Value.ToArray();
+                        resultPairs.Add(new DynamicResult(prop.Name, properties.Any() ? properties : prop.Value));
                     }
                     catch (RuntimeBinderException)
                     {
@@ -200,11 +200,11 @@ namespace SolrSimpleQuery
 
                     try
                     {
-                        if (filterCriteria.FieldList == null || filterCriteria.FieldList.Any(r => r == prop.Name))
-                        {
-                            var properties = ((JProperty) prop).Value.ToArray();
-                            resultPairs.Add(new DynamicResult(prop.Name, properties.Any() ? properties : prop.Value));
-                        }
+                        if (filterCriteria.FieldList != null && filterCriteria.FieldList.Any() &&
+                            filterCriteria.FieldList.All(r => r != prop.Name)) continue;
+
+                        var properties = ((JProperty)prop).Value.ToArray();
+                        resultPairs.Add(new DynamicResult(prop.Name, properties.Any() ? properties : prop.Value));
                     }
                     catch (RuntimeBinderException)
                     {

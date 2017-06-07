@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import { MetaService } from '../shared/http/meta.service';
 import { FilterCriteriaModel } from '../shared/models/filtercriteria.model';
 import { IMultiSelectOption, IMultiSelectTexts, IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 import { SessionStateService } from '../shared//http/sessionstate.service';
@@ -20,7 +19,7 @@ export class FieldListFieldListComponent {
 
 	texts: IMultiSelectTexts;
 
-	constructor(private metaService: MetaService, private sessionStateService: SessionStateService) {
+	constructor(private sessionStateService: SessionStateService) {
 		sessionStateService.allAvailableFieldsChanged.subscribe(r => {
 			this.fieldList = [];
 			sessionStateService.allAvailableFields.forEach(element => {

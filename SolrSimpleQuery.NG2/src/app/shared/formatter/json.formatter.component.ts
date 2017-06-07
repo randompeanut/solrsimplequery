@@ -1,4 +1,5 @@
 import {Component, Input, ViewEncapsulation, OnChanges} from '@angular/core';
+import {SessionStateService} from '../http/sessionstate.service';
 
 interface Item {
   key: string;
@@ -21,7 +22,7 @@ export class JsonFormatterComponent implements OnChanges {
 
   public asset: Array<Item> = [];
 
-  constructor() { }
+  constructor(private sessionStateService: SessionStateService) { }
 
 
   ngOnChanges() {
@@ -39,7 +40,7 @@ export class JsonFormatterComponent implements OnChanges {
     /**
      * Convert json to array of items
      */
-    Object.keys(this.json).forEach((key) => {
+      Object.keys(this.json).forEach((key) => {
       this.asset.push(this.createItem(key, this.json[key]));
     });
   }

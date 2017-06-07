@@ -18,6 +18,7 @@ export class ApiHttp {
 
 	private handleErrorResponse(errorResponse: Response) {
 		try {
+			this.sessionStateService.onEndHttpBusy.emit();
 			var object = errorResponse.json();
 			return Observable.throw (object.errors ? object.errors : []);
 		} catch (ex) {
@@ -25,12 +26,13 @@ export class ApiHttp {
 		};
 	}
 	private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs, useToken ?  : boolean): Observable < Response > {
+		this.sessionStateService.onStartHttpBusy.emit();
 		requestArgs.url = this.sessionStateService.selectedApiEndPoint + '/' + requestArgs.url;
 		let options = new RequestOptions(requestArgs);
 		if (additionalOptions) {
 			options = options.merge(additionalOptions)
 		}
-		return this._request(new Request(options), useToken)
+		return this._request(new Request(options), useToken);
 	}
 
 	get(url: string, useToken: boolean = true, options ?  : RequestOptionsArgs): Observable < Response > {

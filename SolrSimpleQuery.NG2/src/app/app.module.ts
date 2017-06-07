@@ -16,6 +16,7 @@ import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect'
 import { DatePickerModule } from 'ng2-datepicker';
 import { JsonFormatterModule } from './shared/formatter/json.formatter.module';
 import { PrettyJsonModule } from 'angular2-prettyjson';
+import { SpinnerComponent } from './shared/spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { PrettyJsonModule } from 'angular2-prettyjson';
     ConnectionSettingsComponent,
     FilterComponent,
     FilterEditComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,

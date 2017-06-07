@@ -20,7 +20,8 @@ export class ConnectionSettingsComponent {
 		.then(result => {
 			this.indexerEndPoints = [];
 			result.forEach(r => this.indexerEndPoints.push(r));
-		});
+		})
+		.then(r => this.sessionStateService.onEndHttpBusy.emit());
 	}
 
 	getAllIndexerChannels(): void {
@@ -28,7 +29,8 @@ export class ConnectionSettingsComponent {
 		.then(result => {
 			this.indexerChannels = [];
 			result.forEach(r => this.indexerChannels.push(r));
-		});
+		})
+		.then(r => this.sessionStateService.onEndHttpBusy.emit());
 	}
 
 	emitSettingsChangedEvent(): void {

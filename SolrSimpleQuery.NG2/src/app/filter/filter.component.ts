@@ -113,7 +113,8 @@ export class FilterComponent {
 				}
 
         this.sessionStateService.queryExecuted.emit();
-			});
+			})
+			.then(r => this.sessionStateService.onEndHttpBusy.emit());
 		} else {
 			this.queryService.queryDynamic(filterCriteria)
 			.then(r => {
@@ -124,7 +125,8 @@ export class FilterComponent {
 				}
 
         this.sessionStateService.queryExecuted.emit();
-			});
+			})
+			.then(r => this.sessionStateService.onEndHttpBusy.emit());
 		}
 	}
 

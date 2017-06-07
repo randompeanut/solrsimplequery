@@ -14,6 +14,8 @@ export class SessionStateService {
 	filterFieldSelectionChanged: EventEmitter < any >  = new EventEmitter < any > ();
 	fieldListFieldSelectionChanged: EventEmitter < any >  = new EventEmitter < any > ();
     queryExecuted: EventEmitter < any > = new EventEmitter < any > ();
+	onStartHttpBusy: EventEmitter<any> = new EventEmitter<any>();
+	onEndHttpBusy: EventEmitter<any> = new EventEmitter<any>();
 
     currentFilterId: number = -1;
 
@@ -91,7 +93,7 @@ export class SessionStateService {
 		if (!this.selectedAvailableFieldListFields
 			 || this.selectedAvailableFieldListFields.length === 0) {
 
-			return this.allAvailableFields;
+			return [];
 		}
 
 		return this.selectedAvailableFieldListFields;

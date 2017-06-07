@@ -60,6 +60,7 @@ export class FilterFieldListComponent {
 				this.sessionStateService.selectedAvailableFilterFields = this.optionsModel;
 			}
 		})
+		.then(r => this.sessionStateService.onEndHttpBusy.emit())
 		.catch (r => {
 			this.fieldList = [];
 			this.optionsModel = [];

@@ -9,6 +9,5 @@ import {SessionStateService} from './shared/http/sessionstate.service';
 export class AppComponent {
   jsonFormat: string = "Raw";
 
-  constructor(private sessionStateService: SessionStateService) {}  
-
+  constructor(private sessionStateService: SessionStateService) { }
 }
