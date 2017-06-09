@@ -53,12 +53,12 @@ export class FilterEditComponent {
 	texts: IMultiSelectTexts;
 
 	constructor(private sessionStateService: SessionStateService) {
-    let counter = this.sessionStateService.filters.length;
+    let counter = this.sessionStateService.persistenceModel.filters.length;
 
-    let sessionFilter = this.sessionStateService.filters[this.sessionStateService.currentFilterId];
+    let sessionFilter = this.sessionStateService.persistenceModel.filters[this.sessionStateService.persistenceModel.currentFilterId];
     if (sessionFilter === undefined) {
       this.id = counter;
-      this.sessionStateService.filters.push(this);
+      this.sessionStateService.persistenceModel.filters.push(this);
     } else {
       sessionFilter.filter = this;
     }
@@ -141,7 +141,7 @@ export class FilterEditComponent {
 
 	getAvailableFilterFields() {
 		this.availableFields = [];
-		this.sessionStateService.getAvailableFilterFields().forEach(r => {
+		this.sessionStateService.persistenceModel.getAvailableFilterFields().forEach(r => {
 			this.availableFields.push({
 				id: r,
 				name: r

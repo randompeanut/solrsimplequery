@@ -15,8 +15,8 @@ html, body {
 }
 
 .result-column {
-    height: 92vh;
-    min-height: 92vh;
+    height: 95vh;
+    min-height: 95vh;
     overflow-x: auto; 
     overflow-y: auto;
 }

@@ -38,12 +38,10 @@ export class ConnectionSettingsComponent {
 	}
 
 	indexerEndPointUpdated(e): void {
-		this.sessionStateService.selectedIndexerEndPoint = e.currentTarget.value;
 		this.emitSettingsChangedEvent();
 	}
 
 	indexerChannelUpdated(e): void {
-		this.sessionStateService.selectedIndexerChannel = e.currentTarget.value;
 		this.emitSettingsChangedEvent();
 	}
 }

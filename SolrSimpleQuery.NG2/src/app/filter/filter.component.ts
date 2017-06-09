@@ -22,7 +22,6 @@ export class FilterComponent {
 	facetResults: IMultiSelectOption[] = [];
 
 	constructor(private sessionStateService: SessionStateService, private queryService: QueryService) {
-		sessionStateService.filters = [];
 		sessionStateService.settingsUpdated.subscribe(r => {
 			this.getAvailableFilterFields();
 		});
@@ -40,26 +39,26 @@ export class FilterComponent {
 	}
 
 	addFilter() {
-    this.sessionStateService.currentFilterId++;
+    this.sessionStateService.persistenceModel.currentFilterId++;
 		new FilterEditComponent(this.sessionStateService);
 	}
 
 	filterRemoved(e: number) {
-		let filter = this.sessionStateService.filters.find(r => r.id === e);
-		let index = this.sessionStateService.filters.indexOf(filter);
-		this.sessionStateService.filters.splice(index, 1);
+		let filter = this.sessionStateService.persistenceModel.filters.find(r => r.id === e);
+		let index = this.sessionStateService.persistenceModel.filters.indexOf(filter);
+		this.sessionStateService.persistenceModel.filters.splice(index, 1);
     let counter = -1;
-    this.sessionStateService.filters.forEach(f => {
+    this.sessionStateService.persistenceModel.filters.forEach(f => {
       counter++;
       f.id = counter;
     });
 
-    this.sessionStateService.currentFilterId = counter;
+    this.sessionStateService.persistenceModel.currentFilterId = counter;
 	}
 
 	getAvailableFilterFields() {
 		this.availableFields = [];
-		this.sessionStateService.getAvailableFilterFields().forEach(r => {
+		this.sessionStateService.persistenceModel.getAvailableFilterFields().forEach(r => {
 			this.availableFields.push({
 				id: r,
 				name: r
@@ -83,11 +82,11 @@ export class FilterComponent {
 	}
 
 	doQuery(facet: boolean = false) {	
-		let formattedFilters = this.sessionStateService.filters.filter(r => r.toString && r.toString !== '').map(r => r.toString);
-		let filterCriteria = this.sessionStateService.getSeededFilterCriteria();
+		let formattedFilters = this.sessionStateService.persistenceModel.filters.filter(r => r.toString && r.toString !== '').map(r => r.toString);
+		let filterCriteria = this.sessionStateService.persistenceModel.getSeededFilterCriteria();
 
-		filterCriteria.urlFilterList = this.sessionStateService.filters.map(r => r.toString);
-		filterCriteria.fieldList = this.sessionStateService.getAvailableFFieldListFields();
+		filterCriteria.urlFilterList = this.sessionStateService.persistenceModel.filters.map(r => r.toString);
+		filterCriteria.fieldList = this.sessionStateService.persistenceModel.getAvailableFFieldListFields();
 
     filterCriteria.sortFieldName = this.sortByOptionsmodel && this.sortByOptionsmodel.length === 1 ? this.sortByOptionsmodel[0] : '';
     filterCriteria.sortBy = this.sortBy;
@@ -106,7 +105,7 @@ export class FilterComponent {
 
 			this.queryService.queryGroupedDynamic(filterCriteria)
 			.then(r => {
-				this.sessionStateService.queryResultJson = r;
+				this.sessionStateService.persistenceModel.queryResultJson = r;
 
 				if (filterCriteria.facetQuery) {
 					this.getFacetResults(r);
@@ -118,7 +117,7 @@ export class FilterComponent {
 		} else {
 			this.queryService.queryDynamic(filterCriteria)
 			.then(r => {
-				this.sessionStateService.queryResultJson = r;
+				this.sessionStateService.persistenceModel.queryResultJson = r;
 
 				if (filterCriteria.facetQuery) {
 					this.getFacetResults(r);

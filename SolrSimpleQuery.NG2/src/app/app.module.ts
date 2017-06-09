@@ -17,6 +17,7 @@ import { DatePickerModule } from 'ng2-datepicker';
 import { JsonFormatterModule } from './shared/formatter/json.formatter.module';
 import { PrettyJsonModule } from 'angular2-prettyjson';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
+import { CookieService } from 'ng2-cookies';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { SpinnerComponent } from './shared/spinner/spinner.component';
     ApiHttp,
     MetaService,
     QueryService,
+    CookieService,
     SessionStateService
   ],
   bootstrap: [ AppComponent ]

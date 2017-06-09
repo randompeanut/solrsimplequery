@@ -48,7 +48,7 @@
     </div>
 </div>
 <div class="form-group col-md-12">
-    <div *ngFor="let filter of sessionStateService.filters">
+    <div *ngFor="let filter of sessionStateService.persistenceModel.filters">
         <filteredit [filter]="filter" [id]="(filter.id)" (filterRemoved)="filterRemoved(filter.id)"></filteredit>
     </div>
 </div>

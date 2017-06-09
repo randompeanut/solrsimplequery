@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 import { MetaService } from '../shared/http/meta.service';
-import { FilterCriteriaModel } from '../shared/models/filtercriteria.model';
 import { IMultiSelectOption, IMultiSelectTexts, IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 import { SessionStateService } from '../shared//http/sessionstate.service';
 
@@ -20,15 +18,15 @@ export class FilterFieldListComponent {
       this.settings = this.sessionStateService.getDropdownSettings();
       this.texts = this.sessionStateService.getDropdownTexts();
     
-		this.getFieldList();
-
+		this.getFieldList(false);
+		
 		this.sessionStateService.settingsUpdated.subscribe(r => {
-			this.getFieldList();
+			this.getFieldList(true);
 		});
 	}
 
-	getFieldList(): void {
-		let filterCriteria = this.sessionStateService.getSeededFilterCriteria();
+	getFieldList(resetOptions: boolean): void {
+		let filterCriteria = this.sessionStateService.persistenceModel.getSeededFilterCriteria();
 		this.metaService.getAllFieldList(filterCriteria)
 		.then(result => {
 			this.fieldList = [];
@@ -43,21 +41,25 @@ export class FilterFieldListComponent {
 
 			this.fieldList.forEach(r => fieldNames.push(r.name));
 
-			this.sessionStateService.allAvailableFields = fieldNames;
+			this.sessionStateService.persistenceModel.allAvailableFields = fieldNames;
 			this.sessionStateService.allAvailableFieldsChanged.emit();
 		}).
 		then(r => {
-			if (this.optionsModel !== undefined) {
-				let tmpOptionsModel = [];
-				this.optionsModel.forEach(r => {
-					let foundObject = this.fieldList.find(l => l.id === r);
-					if (foundObject !== undefined) {
-						tmpOptionsModel.push(r);
-					}
-				});
+			if (resetOptions) {
+				if (this.optionsModel !== undefined) {
+					let tmpOptionsModel = [];
+					this.optionsModel.forEach(r => {
+						let foundObject = this.fieldList.find(l => l.id === r);
+						if (foundObject !== undefined) {
+							tmpOptionsModel.push(r);
+						}
+					});
 
-				this.optionsModel = tmpOptionsModel;
-				this.sessionStateService.selectedAvailableFilterFields = this.optionsModel;
+					this.optionsModel = tmpOptionsModel;
+					this.sessionStateService.persistenceModel.selectedAvailableFilterFields = this.optionsModel;
+				}
+			} else {
+				this.optionsModel = this.sessionStateService.persistenceModel.selectedAvailableFilterFields;
 			}
 		})
 		.then(r => this.sessionStateService.onEndHttpBusy.emit())
@@ -67,8 +69,17 @@ export class FilterFieldListComponent {
 		});
 	}
 
+	selectionChanged(force: boolean = true) {
+		this.sessionStateService.persistenceModel.selectedAvailableFilterFields = this.optionsModel;
+		if (force) {
+			setTimeout(() => {
+				this.selectionChanged(false);
+			}, 500); //sometimes the collection doesn't update immediately
+		}
+	}
+
 	refreshFilters(force: boolean = true) {
-		this.sessionStateService.selectedAvailableFilterFields = this.optionsModel;
+		this.sessionStateService.persistenceModel.selectedAvailableFilterFields = this.optionsModel;
 
 		if (force) {
 			setTimeout(() => {

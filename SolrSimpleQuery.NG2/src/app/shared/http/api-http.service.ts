@@ -27,7 +27,7 @@ export class ApiHttp {
 	}
 	private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs, useToken ?  : boolean): Observable < Response > {
 		this.sessionStateService.onStartHttpBusy.emit();
-		requestArgs.url = this.sessionStateService.selectedApiEndPoint + '/' + requestArgs.url;
+		requestArgs.url = this.sessionStateService.persistenceModel.selectedApiEndPoint + '/' + requestArgs.url;
 		let options = new RequestOptions(requestArgs);
 		if (additionalOptions) {
 			options = options.merge(additionalOptions)

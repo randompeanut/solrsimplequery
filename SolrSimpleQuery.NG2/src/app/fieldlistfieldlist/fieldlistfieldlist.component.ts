@@ -1,6 +1,4 @@
 import { Component, Input } from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import { FilterCriteriaModel } from '../shared/models/filtercriteria.model';
 import { IMultiSelectOption, IMultiSelectTexts, IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 import { SessionStateService } from '../shared//http/sessionstate.service';
 
@@ -22,7 +20,7 @@ export class FieldListFieldListComponent {
 	constructor(private sessionStateService: SessionStateService) {
 		sessionStateService.allAvailableFieldsChanged.subscribe(r => {
 			this.fieldList = [];
-			sessionStateService.allAvailableFields.forEach(element => {
+			sessionStateService.persistenceModel.allAvailableFields.forEach(element => {
 				this.fieldList.push({
 					id: element,
 					name: element
@@ -31,16 +29,19 @@ export class FieldListFieldListComponent {
 
       this.settings = this.sessionStateService.getDropdownSettings();
       this.settings.showCheckAll = true;
+
       this.texts = this.sessionStateService.getDropdownTexts();
 
 			let fieldNames: string[] = [];
 
 			this.fieldList.forEach(r => fieldNames.push(r.name));
+
+			this.optionsModel = this.sessionStateService.persistenceModel.selectedAvailableFieldListFields;
 		});
 	}
 
 	selectionChanged(force: boolean = true) {
-		this.sessionStateService.selectedAvailableFieldListFields = this.optionsModel;
+		this.sessionStateService.persistenceModel.selectedAvailableFieldListFields = this.optionsModel;
 		if (force) {
 			setTimeout(() => {
 				this.selectionChanged(false);
@@ -49,6 +50,6 @@ export class FieldListFieldListComponent {
 	}
 
 	refreshFieldList() {
-		this.sessionStateService.selectedAvailableFieldListFields = this.optionsModel;
+		this.sessionStateService.persistenceModel.selectedAvailableFieldListFields = this.optionsModel;
 	}
 }

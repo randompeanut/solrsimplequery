@@ -2,43 +2,25 @@ import { Injectable, EventEmitter } from '@angular/core';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { FilterCriteriaModel } from '../models/filtercriteria.model';
-import { FilterEditComponent } from '../../filter/filteredit/filteredit.component';
 import { IMultiSelectTexts, IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
+import { CookieService } from 'ng2-cookies';
+import { PersistenceModel } from '../models/persistence.model';
 
 @Injectable()
 export class SessionStateService {
 
-	settingsUpdated: EventEmitter < any >  = new EventEmitter < any > ();
-	allAvailableFieldsChanged: EventEmitter < any >  = new EventEmitter < any > ();
-	filterFieldSelectionChanged: EventEmitter < any >  = new EventEmitter < any > ();
-	fieldListFieldSelectionChanged: EventEmitter < any >  = new EventEmitter < any > ();
-    queryExecuted: EventEmitter < any > = new EventEmitter < any > ();
+	settingsUpdated: EventEmitter<any>  = new EventEmitter<any>();
+	allAvailableFieldsChanged: EventEmitter<any>  = new EventEmitter<any>();
+	filterFieldSelectionChanged: EventEmitter<any>  = new EventEmitter<any>();
+	fieldListFieldSelectionChanged: EventEmitter<any>  = new EventEmitter<any>();
+    queryExecuted: EventEmitter<any> = new EventEmitter<any>();
 	onStartHttpBusy: EventEmitter<any> = new EventEmitter<any>();
 	onEndHttpBusy: EventEmitter<any> = new EventEmitter<any>();
 
-    currentFilterId: number = -1;
+	persistenceModel: PersistenceModel;
 
-	defaultApiEndPoint = "http://localhost:1177/api";
-	defaultIndexerEndPoint = "http://www.int.dev.funda.nl:8080/indexer";
-	defaultIndexerChannel = "fib";
-	defaultRows = 10;
-	defaultStart = 0;
 	queryEndPoint = "query";
 	metaEndPoint = "meta";
-
-	selectedApiEndPoint: string;
-	selectedIndexerEndPoint: string;
-	selectedIndexerChannel: string;
-	selectedRows: number;
-	selectedStart: number;
-
-	allAvailableFields: string[];
-	selectedAvailableFilterFields: string[];
-	selectedAvailableFieldListFields: string[];
-
-	filterStrings: string[] = [];
-    filters: FilterEditComponent[] = [];
 
     dropDownSettings: IMultiSelectSettings = {
 		enableSearch: true,
@@ -59,47 +41,11 @@ export class SessionStateService {
 		allSelected: 'All selected',
 	};
 
-    queryResultJson: any;
-
-	constructor() {
-		this.selectedApiEndPoint = this.defaultApiEndPoint;
-		this.selectedIndexerEndPoint = this.defaultIndexerEndPoint;
-		this.selectedIndexerChannel = this.defaultIndexerChannel;
-		this.selectedRows = this.defaultRows;
-		this.selectedStart = this.defaultStart;
+	constructor(cookieService: CookieService) {
+		this.persistenceModel = new PersistenceModel(cookieService);
 	}
 
-	getSeededFilterCriteria(): FilterCriteriaModel {
-		let filterCriteriaModel = new FilterCriteriaModel();
-
-		filterCriteriaModel.baseUrl = this.selectedIndexerEndPoint;
-		filterCriteriaModel.channel = this.selectedIndexerChannel;
-		filterCriteriaModel.rows = this.selectedRows;
-		filterCriteriaModel.start = this.selectedStart;
-
-		return filterCriteriaModel;
-	}
-
-	getAvailableFilterFields() {
-		if (!this.selectedAvailableFilterFields
-			 || this.selectedAvailableFilterFields.length === 0) {
-			return this.allAvailableFields;
-		}
-
-		return this.selectedAvailableFilterFields;
-	}
-
-	getAvailableFFieldListFields() {
-		if (!this.selectedAvailableFieldListFields
-			 || this.selectedAvailableFieldListFields.length === 0) {
-
-			return [];
-		}
-
-		return this.selectedAvailableFieldListFields;
-	}
-
-    getDropdownSettings() : IMultiSelectSettings {
+	getDropdownSettings() : IMultiSelectSettings {
         let settings: IMultiSelectSettings = this.simpleClone(this.dropDownSettings);
 
         return settings;
@@ -111,7 +57,7 @@ export class SessionStateService {
         return texts;
     }
 
-    simpleClone(obj: any) {
+	simpleClone(obj: any) {
         return Object.assign({}, obj);
     }
 }
