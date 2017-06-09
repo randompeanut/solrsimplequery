@@ -15,6 +15,18 @@ export class PersistenceModel {
     filterStrings: string[] = [];
     filters: FilterEditComponent[] = [];
 
+    restoreDefaults() {
+        this.selectedApiEndPoint = this.defaultApiEndPoint;
+        this.selectedIndexerEndPoint = this.defaultIndexerEndPoint;
+	    this.selectedIndexerChannel = this.defaultIndexerChannel;;
+	    this.selectedRows = this.defaultRows;
+	    this.selectedStart = this.defaultStart;
+
+        this.selectedAvailableFilterFields = [];
+        this.selectedAvailableFieldListFields= [];
+        this.filters = [];
+    }
+
     get selectedApiEndPoint(): string {
         let value = this.getCookie("selectedApiEndPoint");
         if (value.length > 0) {

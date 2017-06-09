@@ -8,6 +8,9 @@
 </div>
 <form class="col-md-12 content-class">
     <div class="form-group col-md-6 settings-column"> 
+        <div class="form-group col-md-12">
+            <button (click)="restoreDefaults()" class="btn btn-default" style="width: 200px; margin-left: 15px;" data-toggle="tooltip" title="add filter">Restore defaults</button>
+        </div>
         <connectionsettings class="form-group col-md-12"></connectionsettings>
         <div class="form-group col-md-12">
             <filterfieldlist></filterfieldlist>
