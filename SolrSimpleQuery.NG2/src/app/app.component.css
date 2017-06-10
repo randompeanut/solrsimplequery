@@ -74,3 +74,12 @@ html, body {
 .top-spaced {
     margin-top: 3px;
 }
+
+.restoreButton {
+    width: 127px; 
+    margin-left: 15px; 
+    position: relative; 
+    float: right;
+    margin-right: 16px;
+    margin-top: 6px;
+}

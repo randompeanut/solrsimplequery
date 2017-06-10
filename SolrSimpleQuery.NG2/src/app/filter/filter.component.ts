@@ -28,6 +28,9 @@ export class FilterComponent {
 		sessionStateService.allAvailableFieldsChanged.subscribe(r => {
 			this.getAvailableFilterFields();
 		});
+		sessionStateService.queryStarted.subscribe(r => {
+			this.doQuery();
+		});
 
 		this.settings = this.sessionStateService.getDropdownSettings();
 		this.texts = this.sessionStateService.getDropdownTexts();
@@ -81,17 +84,17 @@ export class FilterComponent {
 		}
 	}
 
-	doQuery(facet: boolean = false) {	
+	doQuery() {	
 		let formattedFilters = this.sessionStateService.persistenceModel.filters.filter(r => r.toString && r.toString !== '').map(r => r.toString);
 		let filterCriteria = this.sessionStateService.persistenceModel.getSeededFilterCriteria();
 
-		filterCriteria.urlFilterList = this.sessionStateService.persistenceModel.filters.map(r => r.toString);
-		filterCriteria.fieldList = this.sessionStateService.persistenceModel.getAvailableFFieldListFields();
+		filterCriteria.urlFilters = this.sessionStateService.persistenceModel.filters.map(r => r.toString);
+		filterCriteria.fields = this.sessionStateService.persistenceModel.getAvailableFieldListFields();
 
     filterCriteria.sortFieldName = this.sortByOptionsmodel && this.sortByOptionsmodel.length === 1 ? this.sortByOptionsmodel[0] : '';
     filterCriteria.sortBy = this.sortBy;
 
-		if (facet && this.facetOptionsmodel && this.facetOptionsmodel.length === 1) {
+		if (this.facetOptionsmodel && this.facetOptionsmodel.length === 1) {
 			filterCriteria.facetQuery = true;
 			filterCriteria.facetFieldName = this.facetOptionsmodel[0];
 		}

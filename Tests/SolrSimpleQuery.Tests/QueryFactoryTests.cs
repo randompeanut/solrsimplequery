@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Omu.ValueInjecter;
 using SolrSimpleQuery.Models;
@@ -20,7 +22,7 @@ namespace SolrSimpleQuery.Tests
             BaseUrl = SolrSimpleQueryBaseUrl,
             Channel = SolrSimpleQueryChannel,
             IdentifierFieldName = "GlobalId",
-            FieldList = new[]
+            FieldsList = new List<string>
             {
                 "GlobalId",
                 "BronCode",
@@ -28,14 +30,14 @@ namespace SolrSimpleQuery.Tests
                 "IsKoop",
                 "PublicatieDatum"
             },
-            //FilterList = new IFilter[]
+            //Filters = new IFilter[]
             //{
             //    new SimpleFilter<string>().Create("BronCode", "NVM"),
             //    new SimpleFilter<bool>().Create("IsKoop", true),
             //    new RangeFilter<int>().CreateFrom("KoopPrijs", 125000),
             //    new RangeFilter<DateTime>().CreateTo("PublicatieDatum", TypeExt.CreateDateTime(2017, 2, 1))
             //},
-            UrlFilterList = new[]
+            UrlFiltersList = new List<string>
             {
                 "BronCode-NVM",
                 "IsKoop-true",
@@ -49,29 +51,29 @@ namespace SolrSimpleQuery.Tests
         };
 
         [TestMethod]
-        public void QueryStaticTest()
+        public async Task QueryStaticTest()
         {
-            var result = QueryFactory.Instance.Query<QueryResultObject>(_filterCriteria);
+            var result = await QueryFactory.Instance.Query<QueryResultObject>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
         }
 
         [TestMethod]
-        public void QueryStaticDefaultBaseUrlTest_success()
+        public async Task QueryStaticDefaultBaseUrlTest_success()
         {
             QueryFactory.SetBaseUrl(SolrSimpleQueryBaseUrl);
 
-            var result = new QueryFactory().Query<QueryResultObject>(_filterCriteria);
+            var result = await new QueryFactory().Query<QueryResultObject>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
         }
 
         [TestMethod]
-        public void QueryStaticDefaultChannelTest_success()
+        public async Task QueryStaticDefaultChannelTest_success()
         {
             QueryFactory.SetChannel(SolrSimpleQueryChannel);
 
-            var result = new QueryFactory().Query<QueryResultObject>(_filterCriteria);
+            var result = await new QueryFactory().Query<QueryResultObject>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
         }
@@ -81,7 +83,7 @@ namespace SolrSimpleQuery.Tests
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void QueryStaticDefaultBaseUrlTest_fail()
+        public async Task QueryStaticDefaultBaseUrlTest_fail()
         {
             QueryFactory.ResetInstance();
 
@@ -89,7 +91,7 @@ namespace SolrSimpleQuery.Tests
             noBaseUrlCriteria.InjectFrom(_filterCriteria);
             noBaseUrlCriteria.BaseUrl = null;
 
-            new QueryFactory().Query<QueryResultObject>(noBaseUrlCriteria);
+            await new QueryFactory().Query<QueryResultObject>(noBaseUrlCriteria);
         }
 
         /// <summary>
@@ -97,7 +99,7 @@ namespace SolrSimpleQuery.Tests
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(WebException))]
-        public void QueryStaticDefaultChannelTest_fail()
+        public async Task QueryStaticDefaultChannelTest_fail()
         {
             QueryFactory.ResetInstance();
 
@@ -105,13 +107,13 @@ namespace SolrSimpleQuery.Tests
             noChannelCriteria.InjectFrom(_filterCriteria);
             noChannelCriteria.Channel = null;
 
-            new QueryFactory().Query<QueryResultObject>(noChannelCriteria);
+            await new QueryFactory().Query<QueryResultObject>(noChannelCriteria);
         }
 
         [TestMethod]
-        public void QueryGroupedStaticTest()
+        public async Task QueryGroupedStaticTest()
         {
-            var result = QueryFactory.Instance.QueryGrouped<long, QueryResultObject>(_filterCriteria);
+            var result = await QueryFactory.Instance.QueryGrouped<long, QueryResultObject>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
 
@@ -128,15 +130,14 @@ namespace SolrSimpleQuery.Tests
         }
 
         [TestMethod]
-        public void QueryGroupedDynamicStaticTest()
+        public async Task QueryGroupedDynamicStaticTest()
         {
-            var result = QueryFactory.Instance.QueryGroupedDynamic<long>(_filterCriteria);
+            var result = await QueryFactory.Instance.QueryGroupedDynamic<long>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
 
             var fieldValueString = result.GetFieldValueByIdentifier(GlobalId, "BronCode");
             var fieldValueBool = result.GetFieldValueByIdentifier(GlobalId, "IsKoop");
-            var fieldValueDate = result.GetFieldValueByIdentifier(GlobalId, "PublicatieDatum");
 
             Assert.IsTrue(fieldValueString.Value == "NVM");
             Assert.IsTrue(fieldValueBool.Value);
@@ -147,23 +148,22 @@ namespace SolrSimpleQuery.Tests
         }
 
         [TestMethod]
-        public void QueryTest()
+        public async Task QueryTest()
         {
-            var result = new QueryFactory().Query<QueryResultObject>(_filterCriteria);
+            var result = await new QueryFactory().Query<QueryResultObject>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
         }
 
         [TestMethod]
-        public void QueryGroupedTest()
+        public async Task QueryGroupedTest()
         {
-            var result = new QueryFactory().QueryGrouped<long, QueryResultObject>(_filterCriteria);
+            var result = await new QueryFactory().QueryGrouped<long, QueryResultObject>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
 
             var fieldValueString = result.GetFieldValueByIdentifier(GlobalId, "BronCode");
             var fieldValueBool = result.GetFieldValueByIdentifier(GlobalId, "IsKoop");
-            var fieldValueDate = result.GetFieldValueByIdentifier(GlobalId, "PublicatieDatum");
 
             Assert.IsTrue(fieldValueString == "NVM");
             Assert.IsTrue(fieldValueBool);
@@ -174,15 +174,14 @@ namespace SolrSimpleQuery.Tests
         }
 
         [TestMethod]
-        public void QueryGroupedDynamicTest()
+        public async Task QueryGroupedDynamicTest()
         {
-            var result = new QueryFactory().QueryGroupedDynamic<long>(_filterCriteria);
+            var result = await new QueryFactory().QueryGroupedDynamic<long>(_filterCriteria);
 
             Assert.IsTrue(result.Response.Docs.Count == 5);
 
             var fieldValueString = result.GetFieldValueByIdentifier(GlobalId, "BronCode");
             var fieldValueBool = result.GetFieldValueByIdentifier(GlobalId, "IsKoop");
-            var fieldValueDate = result.GetFieldValueByIdentifier(GlobalId, "PublicatieDatum");
 
             Assert.IsTrue(fieldValueString.Value == "NVM");
             Assert.IsTrue(fieldValueBool.Value);

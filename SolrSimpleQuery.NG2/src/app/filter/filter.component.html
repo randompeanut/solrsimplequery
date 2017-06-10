@@ -1,8 +1,4 @@
 <div class="form-group col-md-12">
-    <div class="form-group col-md-2">
-        <div style="font-weight: bold">Query faceted</div>
-        <button (click)="doQuery(true)" class="btn btn-default glyphicon glyphicon-filter" style="margin-bottom: 4px; width: 100px;" data-toggle="tooltip" title="query solr"></button>
-    </div>
     <div class="form-group col-md-3">
         <div style="font-weight: bold">Facet field</div>
         <ss-multiselect-dropdown [options]="availableFields" [texts]="texts" [settings]="settings" 
@@ -18,10 +14,6 @@
 </div>
 
 <div class="form-group col-md-12">
-    <div class="form-group col-md-2">
-        <div style="font-weight: bold">Query</div>
-        <button (click)="doQuery()" class="btn btn-default glyphicon glyphicon-filter" style="margin-bottom: 4px; width: 100px;" data-toggle="tooltip" title="query solr"></button>
-    </div>
     <div class="form-group col-md-2">
         <div style="font-weight: bold">Add filters</div>
         <button (click)="addFilter()" class="btn btn-default glyphicon glyphicon-plus" style="margin-bottom: 4px; width: 100px;" data-toggle="tooltip" title="add filter"></button>

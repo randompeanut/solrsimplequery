@@ -20,7 +20,8 @@ export class FieldListFieldListComponent {
 	constructor(private sessionStateService: SessionStateService) {
 		sessionStateService.allAvailableFieldsChanged.subscribe(r => {
 			this.fieldList = [];
-			sessionStateService.persistenceModel.allAvailableFields.forEach(element => {
+			sessionStateService.persistenceModel.allAvailableFields
+				.forEach(element => {
 				this.fieldList.push({
 					id: element,
 					name: element

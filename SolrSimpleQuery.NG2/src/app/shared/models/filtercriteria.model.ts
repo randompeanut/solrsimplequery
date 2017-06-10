@@ -1,8 +1,8 @@
 export class FilterCriteriaModel {
     identifierFieldName: string;
     identifierFieldValue: string;
-    urlFilterList: string[];
-    fieldList: string[];
+    urlFilters: string[];
+    fields: string[];
     sortFieldName: string;
     sortBy: string;
     start: number = 0;

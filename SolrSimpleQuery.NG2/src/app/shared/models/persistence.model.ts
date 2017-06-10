@@ -23,7 +23,7 @@ export class PersistenceModel {
 	    this.selectedStart = this.defaultStart;
 
         this.selectedAvailableFilterFields = [];
-        this.selectedAvailableFieldListFields= [];
+        this.selectedAvailableFieldListFields = [];
         this.filters = [];
     }
 
@@ -136,13 +136,13 @@ export class PersistenceModel {
 	getAvailableFilterFields() {
 		if (!this.selectedAvailableFilterFields
 			 || this.selectedAvailableFilterFields.length === 0) {
-			return this.allAvailableFields;
+			        return this.allAvailableFields;
 		}
 
 		return this.selectedAvailableFilterFields;
 	}
 
-	getAvailableFFieldListFields() {
+	getAvailableFieldListFields() {
 		if (!this.selectedAvailableFieldListFields
 			 || this.selectedAvailableFieldListFields.length === 0) {
 

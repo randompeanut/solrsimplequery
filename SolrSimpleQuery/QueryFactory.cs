@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,40 +18,39 @@ namespace SolrSimpleQuery
 {
     public interface IQueryFactory
     {
-        SolrResponse<List<TResult>> Query<TResult>(FilterCriteria filterCriteria);
+        Task<SolrResponse<List<TResult>>> Query<TResult>(FilterCriteria filterCriteria);
 
-        string[] QueryCsv(FilterCriteria filterCriteria);
+        Task<List<string>> QueryCsv(FilterCriteria filterCriteria);
 
-        string QueryRaw(FilterCriteria filterCriteria);
+        Task<string> QueryRaw(FilterCriteria filterCriteria);
 
-        SolrResponse<List<List<DynamicResult>>> QueryDynamic(FilterCriteria filterCriteria);
+        Task<SolrResponse<List<List<DynamicResult>>>> QueryDynamic(FilterCriteria filterCriteria);
 
-        SolrResponse<Dictionary<TIdentifierField, TResult>> QueryGrouped<TIdentifierField, TResult>(
+        Task<SolrResponse<Dictionary<TIdentifierField, TResult>>> QueryGrouped<TIdentifierField, TResult>(
             FilterCriteria filterCriteria);
 
-        SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>> QueryGroupedDynamic<TIdentifierField>(
+        Task<SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>>> QueryGroupedDynamic<TIdentifierField>(
             FilterCriteria filterCriteria);
 
-        dynamic GetFieldValueByIdentifier<TIdentifierField, TResult>(
+        Task<dynamic> GetFieldValueByIdentifier<TIdentifierField, TResult>(
             SolrResponse<Dictionary<TIdentifierField, TResult>> resultList,
             TIdentifierField identifierFieldValue,
             string fieldName);
 
-        dynamic GetFieldValueByIdentifier<TIdentifierField>(FilterCriteria filterCriteria, string fieldName);
+        Task<dynamic> GetFieldValueByIdentifier<TIdentifierField>(FilterCriteria filterCriteria, string fieldName);
 
-        TResult GetObjectByIdentifier<TIdentifierField, TResult>(
+        Task<TResult> GetObjectByIdentifier<TIdentifierField, TResult>(
             SolrResponse<Dictionary<TIdentifierField, TResult>> resultList,
             TIdentifierField identifierFieldValue);
 
-        TResult GetObjectByIdentifier<TIdentifierField, TResult>(FilterCriteria filterCriteria)
+        Task<TResult> GetObjectByIdentifier<TIdentifierField, TResult>(FilterCriteria filterCriteria)
             where TResult : class, new();
 
-        List<DynamicResult> GetDynamicObjectByIdentifier<TIdentifierField>(FilterCriteria filterCriteria);
+        Task<List<DynamicResult>> GetDynamicObjectByIdentifier<TIdentifierField>(FilterCriteria filterCriteria);
     }
 
     public class QueryFactory : IQueryFactory
     {
-        private static readonly WebClient Client = new WebClient();
         private static QueryFactory _instance;
         private string _baseUrl = ConfigurationManager.AppSettings["SolrSimpleQueryBaseUrl"];
         private string _channel = ConfigurationManager.AppSettings["SolrSimpleQueryChannel"];
@@ -59,9 +60,9 @@ namespace SolrSimpleQuery
         /// </summary>
         public static QueryFactory Instance => _instance ?? (_instance = new QueryFactory());
 
-        public SolrResponse<List<TResult>> Query<TResult>(FilterCriteria filterCriteria)
+        public async Task<SolrResponse<List<TResult>>> Query<TResult>(FilterCriteria filterCriteria)
         {
-            var result = DoQuery<SolrResponse<List<TResult>>>(filterCriteria);
+            var result = await DoQuery<SolrResponse<List<TResult>>>(filterCriteria);
 
             if (filterCriteria.FacetQuery)
                 result.Facet_Counts.Facet_Fields = result.Facet_Counts.GetFacetValues();
@@ -69,32 +70,32 @@ namespace SolrSimpleQuery
             return result;
         }
 
-        public string[] QueryCsv(FilterCriteria filterCriteria)
+        public async Task<List<string>> QueryCsv(FilterCriteria filterCriteria)
         {
-            return DoQueryCsv(filterCriteria);
+            return await DoQueryCsv(filterCriteria);
         }
 
-        public string QueryRaw(FilterCriteria filterCriteria)
+        public async Task<string> QueryRaw(FilterCriteria filterCriteria)
         {
-            return DoQuery(filterCriteria);
+            return await DoQuery(filterCriteria);
         }
 
-        public SolrResponse<List<List<DynamicResult>>> QueryDynamic(FilterCriteria filterCriteria)
+        public async Task<SolrResponse<List<List<DynamicResult>>>> QueryDynamic(FilterCriteria filterCriteria)
         {
             var requestResponse = new SolrResponse<List<List<DynamicResult>>>();
             var valueCollection = new List<List<DynamicResult>>();
 
-            var result = DoQuery<SolrResponse<List<dynamic>>>(filterCriteria);
+            var result = await DoQuery<SolrResponse<List<dynamic>>>(filterCriteria);
 
             if (filterCriteria.FacetQuery)
-                requestResponse.Facet_Counts = new FacetResponse {Facet_Fields = result.Facet_Counts.GetFacetValues()};
+                requestResponse.Facet_Counts = new FacetResponse { Facet_Fields = result.Facet_Counts.GetFacetValues() };
 
             requestResponse.ResponseHeader = result.ResponseHeader;
             requestResponse.Response = new Response<List<List<DynamicResult>>>
             {
                 NumFound = result.Response.NumFound,
                 Start = result.Response.Start,
-                Docs = new List<List<DynamicResult>> {new List<DynamicResult>()}
+                Docs = new List<List<DynamicResult>> { new List<DynamicResult>() }
             };
 
             foreach (var row in result.Response.Docs)
@@ -104,10 +105,10 @@ namespace SolrSimpleQuery
                 foreach (var prop in row)
                     try
                     {
-                        if (filterCriteria.FieldList != null && filterCriteria.FieldList.Any() &&
-                            filterCriteria.FieldList.All(r => r != prop.Name)) continue;
+                        if (filterCriteria.FieldsList.Any() &&
+                            filterCriteria.FieldsList.All(r => r != prop.Name)) continue;
 
-                        var properties = ((JProperty) prop).Value.ToArray();
+                        var properties = ((JProperty)prop).Value.ToArray();
                         resultPairs.Add(new DynamicResult(prop.Name, properties.Any() ? properties : prop.Value));
                     }
                     catch (RuntimeBinderException)
@@ -124,16 +125,16 @@ namespace SolrSimpleQuery
             return requestResponse;
         }
 
-        public SolrResponse<Dictionary<TIdentifierField, TResult>> QueryGrouped<TIdentifierField, TResult>(
+        public async Task<SolrResponse<Dictionary<TIdentifierField, TResult>>> QueryGrouped<TIdentifierField, TResult>(
             FilterCriteria filterCriteria)
         {
             var requestResponse = new SolrResponse<Dictionary<TIdentifierField, TResult>>();
             var valueCollection = new Dictionary<TIdentifierField, TResult>();
 
-            var result = DoQuery<SolrResponse<List<TResult>>>(filterCriteria);
+            var result = await DoQuery<SolrResponse<List<TResult>>>(filterCriteria);
 
             if (filterCriteria.FacetQuery)
-                requestResponse.Facet_Counts = new FacetResponse {Facet_Fields = result.Facet_Counts.GetFacetValues()};
+                requestResponse.Facet_Counts = new FacetResponse { Facet_Fields = result.Facet_Counts.GetFacetValues() };
 
             requestResponse.ResponseHeader = result.ResponseHeader;
             requestResponse.Response = new Response<Dictionary<TIdentifierField, TResult>>
@@ -150,7 +151,7 @@ namespace SolrSimpleQuery
             {
                 var identifierFieldValue = identifierFieldProperty.GetValue(row);
                 valueCollection.Add(
-                    (TIdentifierField) Convert.ChangeType(identifierFieldValue, typeof(TIdentifierField)), row);
+                    (TIdentifierField)Convert.ChangeType(identifierFieldValue, typeof(TIdentifierField)), row);
             }
 
             requestResponse.Response.Docs = valueCollection;
@@ -158,26 +159,21 @@ namespace SolrSimpleQuery
             return requestResponse;
         }
 
-        public SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>> QueryGroupedDynamic<TIdentifierField>(
+        public async Task<SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>>> QueryGroupedDynamic<TIdentifierField>(
             FilterCriteria filterCriteria)
         {
             var requestResponse = new SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>>();
             var valueCollection = new Dictionary<TIdentifierField, List<DynamicResult>>();
 
-            if (!filterCriteria.FieldList.Contains(filterCriteria.IdentifierFieldName))
+            if (!filterCriteria.FieldsList.Contains(filterCriteria.IdentifierFieldName))
             {
-                var fieldList = new string[filterCriteria.FieldList.Length + 1];
-                Array.Copy(filterCriteria.FieldList, fieldList, filterCriteria.FieldList.Length);
-
-                fieldList[filterCriteria.FieldList.Length] = filterCriteria.IdentifierFieldName;
-
-                filterCriteria.FieldList = fieldList;
+                filterCriteria.FieldsList.Add(filterCriteria.IdentifierFieldName);
             }
 
-            var result = DoQuery<SolrResponse<List<dynamic>>>(filterCriteria);
+            var result = await DoQuery<SolrResponse<List<dynamic>>>(filterCriteria);
 
             if (filterCriteria.FacetQuery)
-                requestResponse.Facet_Counts = new FacetResponse {Facet_Fields = result.Facet_Counts.GetFacetValues()};
+                requestResponse.Facet_Counts = new FacetResponse { Facet_Fields = result.Facet_Counts.GetFacetValues() };
 
             requestResponse.ResponseHeader = result.ResponseHeader;
             requestResponse.Response = new Response<Dictionary<TIdentifierField, List<DynamicResult>>>
@@ -196,12 +192,12 @@ namespace SolrSimpleQuery
                 {
                     if (prop.Name == filterCriteria.IdentifierFieldName)
                         identifierFieldValue =
-                            (TIdentifierField) Convert.ChangeType(prop.First.Value, typeof(TIdentifierField));
+                            (TIdentifierField)Convert.ChangeType(prop.First.Value, typeof(TIdentifierField));
 
                     try
                     {
-                        if (filterCriteria.FieldList != null && filterCriteria.FieldList.Any() &&
-                            filterCriteria.FieldList.All(r => r != prop.Name)) continue;
+                        if (filterCriteria.FieldsList.Any() &&
+                            filterCriteria.FieldsList.All(r => r != prop.Name)) continue;
 
                         var properties = ((JProperty)prop).Value.ToArray();
                         resultPairs.Add(new DynamicResult(prop.Name, properties.Any() ? properties : prop.Value));
@@ -222,7 +218,7 @@ namespace SolrSimpleQuery
             return requestResponse;
         }
 
-        public dynamic GetFieldValueByIdentifier<TIdentifierField, TResult>(
+        public Task<dynamic> GetFieldValueByIdentifier<TIdentifierField, TResult>(
             SolrResponse<Dictionary<TIdentifierField, TResult>> resultList,
             TIdentifierField identifierFieldValue,
             string fieldName)
@@ -230,36 +226,36 @@ namespace SolrSimpleQuery
             return resultList.GetFieldValueByIdentifier(identifierFieldValue, fieldName);
         }
 
-        public dynamic GetFieldValueByIdentifier<TIdentifierField>(FilterCriteria filterCriteria, string fieldName)
+        public async Task<dynamic> GetFieldValueByIdentifier<TIdentifierField>(FilterCriteria filterCriteria, string fieldName)
         {
-            var resultList = QueryGroupedDynamic<TIdentifierField>(filterCriteria);
+            var resultList = await QueryGroupedDynamic<TIdentifierField>(filterCriteria);
             return resultList.GetFieldValueByIdentifier(
-                    (TIdentifierField) Convert.ChangeType(filterCriteria.IdentifierFieldValue,
+                    (TIdentifierField)Convert.ChangeType(filterCriteria.IdentifierFieldValue,
                         typeof(TIdentifierField)),
                     fieldName)
                 .Value;
         }
 
-        public TResult GetObjectByIdentifier<TIdentifierField, TResult>(
+        public async Task<TResult> GetObjectByIdentifier<TIdentifierField, TResult>(
             SolrResponse<Dictionary<TIdentifierField, TResult>> resultList,
             TIdentifierField identifierFieldValue)
         {
-            return resultList.GetObjectByIdentifier(identifierFieldValue);
+            return await Task.Run(() => resultList.GetObjectByIdentifier(identifierFieldValue));
         }
 
-        public TResult GetObjectByIdentifier<TIdentifierField, TResult>(FilterCriteria filterCriteria)
+        public async Task<TResult> GetObjectByIdentifier<TIdentifierField, TResult>(FilterCriteria filterCriteria)
             where TResult : class, new()
         {
-            var resultList = QueryGrouped<TIdentifierField, TResult>(filterCriteria);
+            var resultList = await QueryGrouped<TIdentifierField, TResult>(filterCriteria);
             return resultList.GetObjectByIdentifier(
-                (TIdentifierField) Convert.ChangeType(filterCriteria.IdentifierFieldValue, typeof(TIdentifierField)));
+                (TIdentifierField)Convert.ChangeType(filterCriteria.IdentifierFieldValue, typeof(TIdentifierField)));
         }
 
-        public List<DynamicResult> GetDynamicObjectByIdentifier<TIdentifierField>(FilterCriteria filterCriteria)
+        public async Task<List<DynamicResult>> GetDynamicObjectByIdentifier<TIdentifierField>(FilterCriteria filterCriteria)
         {
-            var resultList = QueryGroupedDynamic<TIdentifierField>(filterCriteria);
+            var resultList = await QueryGroupedDynamic<TIdentifierField>(filterCriteria);
             return resultList.GetObjectByIdentifier(
-                (TIdentifierField) Convert.ChangeType(filterCriteria.IdentifierFieldValue, typeof(TIdentifierField)));
+                (TIdentifierField)Convert.ChangeType(filterCriteria.IdentifierFieldValue, typeof(TIdentifierField)));
         }
 
         public static void SetBaseUrl(string baseUrl)
@@ -293,21 +289,21 @@ namespace SolrSimpleQuery
         /// <param name="start"></param>
         /// <param name="rows"></param>
         /// <returns></returns>
-        private static TResult DoQuery<TResult>(FilterCriteria filterCriteria)
+        private static async Task<TResult> DoQuery<TResult>(FilterCriteria filterCriteria)
         {
-            var resultString = DoQuery(filterCriteria);
+            var resultString = await DoQuery(filterCriteria);
             return JsonConvert.DeserializeObject<TResult>(resultString);
         }
 
-        private static string DoQuery(FilterCriteria filterCriteria)
+        private static async Task<string> DoQuery(FilterCriteria filterCriteria)
         {
             CheckFilterCriteriaForIdentifierValue(filterCriteria);
 
-            using (Client)
+            using (var client = new HttpClient())
             {
-                var resultString = Client.DownloadString(CreateUrl(filterCriteria));
+                var result = await client.GetAsync(CreateUrl(filterCriteria));
 
-                return resultString;
+                return await result.Content.ReadAsStringAsync();
             }
         }
 
@@ -324,17 +320,19 @@ namespace SolrSimpleQuery
         /// <param name="start"></param>
         /// <param name="rows"></param>
         /// <returns></returns>
-        private static string[] DoQueryCsv(FilterCriteria filterCriteria)
+        private static async Task<List<string>> DoQueryCsv(FilterCriteria filterCriteria)
         {
             CheckFilterCriteriaForIdentifierValue(filterCriteria);
 
-            using (Client)
+            using (var client = new HttpClient())
             {
-                var result = Client.DownloadString(CreateUrl(filterCriteria)).Split(',').ToList();
+                var result = await client.GetAsync(CreateUrl(filterCriteria));
+                var resultString = await result.Content.ReadAsStringAsync();
+                var processedResult = resultString.Split(',').ToList();
 
-                result.Sort();
+                processedResult.Sort();
 
-                return result.ToArray();
+                return processedResult;
             }
         }
 
@@ -342,38 +340,29 @@ namespace SolrSimpleQuery
         {
             if (filterCriteria.IdentifierFieldName == null || filterCriteria.IdentifierFieldValue == null) return;
 
-            if (filterCriteria.FilterList == null && filterCriteria.UrlFilterList == null)
-                filterCriteria.FilterList = new IFilter[0];
+            if (filterCriteria.FiltersList == null && filterCriteria.UrlFiltersList == null)
+                filterCriteria.FiltersList = new List<IFilter>();
 
-            if (filterCriteria.FilterList != null)
+            if (filterCriteria.FiltersList != null && filterCriteria.FiltersList.Any())
             {
-                if (filterCriteria.UrlFilterList != null)
-                    filterCriteria.UrlFilterList = null; // give preference to IFilter filterList
+                filterCriteria.UrlFiltersList = new List<string>(); // give preference to IFilter filterList
 
-                if (filterCriteria.FilterList.All(r => r.FieldName != filterCriteria.IdentifierFieldName))
+                if (filterCriteria.FiltersList.All(r => r.FieldName != filterCriteria.IdentifierFieldName))
                 {
-                    var filterList = new IFilter[filterCriteria.FilterList.Length + 1];
-                    Array.Copy(filterCriteria.FilterList, filterList, filterCriteria.FilterList.Length);
-
-                    filterList[filterCriteria.FilterList.Length] =
+                    filterCriteria.FiltersList.Add(
                         new SimpleFilter<string>().Create(filterCriteria.IdentifierFieldName,
-                            filterCriteria.IdentifierFieldValue);
-
-                    filterCriteria.FilterList = filterList;
+                            filterCriteria.IdentifierFieldValue));
                 }
             }
 
-            if (filterCriteria.UrlFilterList != null)
-                if (filterCriteria.UrlFilterList.All(r => r.Split('-')[0] != filterCriteria.IdentifierFieldName))
+            if (filterCriteria.UrlFiltersList == null) return;
+            {
+                if (filterCriteria.UrlFiltersList.All(r => r.Split('-')[0] != filterCriteria.IdentifierFieldName))
                 {
-                    var filterList = new string[filterCriteria.UrlFilterList.Length + 1];
-                    Array.Copy(filterCriteria.UrlFilterList, filterList, filterCriteria.UrlFilterList.Length);
-
-                    filterList[filterCriteria.UrlFilterList.Length] = string.Concat(filterCriteria.IdentifierFieldName,
-                        "-", filterCriteria.IdentifierFieldValue);
-
-                    filterCriteria.UrlFilterList = filterList;
+                    filterCriteria.UrlFiltersList.Add(string.Concat(filterCriteria.IdentifierFieldName,
+                        "-", filterCriteria.IdentifierFieldValue));
                 }
+            }
         }
 
         private static string GetBaseUrl(string baseUrl)
@@ -406,12 +395,12 @@ namespace SolrSimpleQuery
 
             var q = "*:*".UrlEncode();
 
-            var fieldString = StringFormatters.GetFieldsString(filterCriteria.FieldList);
+            var fieldString = StringFormatters.GetFieldsString(filterCriteria.FieldsList);
 
-            var filterString = filterCriteria.FilterList != null
-                ? StringFormatters.GetFiltersString(filterCriteria.FilterList)
-                : filterCriteria.UrlFilterList != null
-                    ? StringFormatters.GetFiltersString(filterCriteria.UrlFilterList)
+            var filterString = filterCriteria.FiltersList.Any()
+                ? StringFormatters.GetFiltersString(filterCriteria.FiltersList)
+                : filterCriteria.UrlFiltersList.Any()
+                    ? StringFormatters.GetFiltersString(filterCriteria.UrlFiltersList)
                     : string.Empty;
 
             var sortString = StringFormatters.GetSortString(filterCriteria.SortFieldName,

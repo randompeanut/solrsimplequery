@@ -19,4 +19,8 @@ export class AppComponent {
     this.sessionStateService.filterFieldSelectionChanged.emit();
     this.sessionStateService.fieldListFieldSelectionChanged.emit();
   }
+
+  startQuery() {
+    this.sessionStateService.queryStarted.emit();
+  }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 using SolrSimpleQuery.Models;
 
@@ -21,28 +22,28 @@ namespace SolrSimpleQuery.Api.Controllers
 
         [HttpPost]
         [Route("getallavailablefields")]
-        public virtual IHttpActionResult GetAllAvailableFields(FilterCriteria filterCriteria)
+        public virtual async Task<IHttpActionResult> GetAllAvailableFields(FilterCriteria filterCriteria)
         {
-            var result = _metaFactory.GetAllAvailableFields(filterCriteria);
+            var result = await _metaFactory.GetAllAvailableFields(filterCriteria);
 
             return Ok(result);
         }
 
         [HttpPost]
         [Route("getavailablefields")]
-        public virtual IHttpActionResult GetAvailableFields(FilterCriteria filterCriteria)
+        public virtual async Task<IHttpActionResult> GetAvailableFields(FilterCriteria filterCriteria)
         {
             var result =
-                _metaFactory.GetAvailableFields(filterCriteria);
+                await _metaFactory.GetAvailableFields(filterCriteria);
 
             return Ok(result);
         }
 
         [HttpPost]
         [Route("checkforfields")]
-        public virtual IHttpActionResult CheckForFields(FilterCriteria filterCriteria)
+        public virtual async Task<IHttpActionResult> CheckForFields(FilterCriteria filterCriteria)
         {
-            var result = MetaFactory.Instance.CheckForFields(filterCriteria);
+            var result = await MetaFactory.Instance.CheckForFields(filterCriteria);
 
             return Ok(result);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SolrSimpleQuery.Filters;
 using SolrSimpleQuery.Filters.Interfaces;
@@ -14,9 +15,9 @@ namespace SolrSimpleQuery.Utility.Formatters
         /// </summary>
         /// <param name="fieldList"></param>
         /// <returns></returns>
-        public static string GetFieldsString(string[] fieldList)
+        public static string GetFieldsString(List<string> fieldList)
         {
-            return fieldList != null
+            return fieldList.Any()
                 ? "&fl=" + string.Join(UrlExt.UrlCommma, fieldList.Select(f => f.UrlEncode()))
                 : string.Empty;
         }
@@ -26,9 +27,9 @@ namespace SolrSimpleQuery.Utility.Formatters
         /// </summary>
         /// <param name="filterCollection"></param>
         /// <returns></returns>
-        public static string GetFiltersString(IFilter[] filterCollection)
+        public static string GetFiltersString(List<IFilter> filterCollection)
         {
-            return filterCollection != null
+            return filterCollection.Any()
                 ? filterCollection.Aggregate(string.Empty,
                     (current, filter) => current + "&fq=" + filter.ToString)
                 : string.Empty;
@@ -40,7 +41,7 @@ namespace SolrSimpleQuery.Utility.Formatters
         /// </summary>
         /// <param name="filterCollection"></param>
         /// <returns></returns>
-        public static string GetFiltersString(string[] filterCollection)
+        public static string GetFiltersString(List<string> filterCollection)
         {
             var filterString = string.Empty;
 

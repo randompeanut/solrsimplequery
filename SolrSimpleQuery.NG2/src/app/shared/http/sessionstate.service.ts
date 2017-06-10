@@ -16,6 +16,7 @@ export class SessionStateService {
     queryExecuted: EventEmitter<any> = new EventEmitter<any>();
 	onStartHttpBusy: EventEmitter<any> = new EventEmitter<any>();
 	onEndHttpBusy: EventEmitter<any> = new EventEmitter<any>();
+	queryStarted: EventEmitter<any> = new EventEmitter<any>();
 
 	persistenceModel: PersistenceModel;
 
