@@ -8,7 +8,6 @@ namespace SolrSimpleQuery
     public interface IMetaFactory
     {
         Task<int> CheckForFields(FilterCriteria filterCriteria);
-
         Task<List<string>> GetAllAvailableFields(FilterCriteria filterCriteria);
         Task<List<string>> GetAvailableFields(FilterCriteria filterCriteria);
     }
@@ -24,7 +23,7 @@ namespace SolrSimpleQuery
 
         public async Task<int> CheckForFields(FilterCriteria filterCriteria)
         {
-            if (filterCriteria.FieldsList == null || !filterCriteria.FieldsList.Any())
+            if (filterCriteria == null)
                 return 0;
 
             try
@@ -41,12 +40,18 @@ namespace SolrSimpleQuery
 
         public async Task<List<string>> GetAllAvailableFields(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             filterCriteria.OverrideQuery = "q=*%3A*&rows=0&wt=csv&facet=true";
             return await QueryFactory.Instance.QueryCsv(filterCriteria);
         }
 
         public async Task<List<string>> GetAvailableFields(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             var fields = new List<string>();
 
             var result = await QueryFactory.Instance.Query<dynamic>(filterCriteria);

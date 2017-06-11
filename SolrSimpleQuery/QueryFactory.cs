@@ -62,6 +62,9 @@ namespace SolrSimpleQuery
 
         public async Task<SolrResponse<List<TResult>>> Query<TResult>(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             var result = await DoQuery<SolrResponse<List<TResult>>>(filterCriteria);
 
             if (filterCriteria.FacetQuery)
@@ -72,16 +75,25 @@ namespace SolrSimpleQuery
 
         public async Task<List<string>> QueryCsv(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             return await DoQueryCsv(filterCriteria);
         }
 
         public async Task<string> QueryRaw(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             return await DoQuery(filterCriteria);
         }
 
         public async Task<SolrResponse<List<List<DynamicResult>>>> QueryDynamic(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             var requestResponse = new SolrResponse<List<List<DynamicResult>>>();
             var valueCollection = new List<List<DynamicResult>>();
 
@@ -128,6 +140,9 @@ namespace SolrSimpleQuery
         public async Task<SolrResponse<Dictionary<TIdentifierField, TResult>>> QueryGrouped<TIdentifierField, TResult>(
             FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             var requestResponse = new SolrResponse<Dictionary<TIdentifierField, TResult>>();
             var valueCollection = new Dictionary<TIdentifierField, TResult>();
 
@@ -162,6 +177,9 @@ namespace SolrSimpleQuery
         public async Task<SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>>> QueryGroupedDynamic<TIdentifierField>(
             FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             var requestResponse = new SolrResponse<Dictionary<TIdentifierField, List<DynamicResult>>>();
             var valueCollection = new Dictionary<TIdentifierField, List<DynamicResult>>();
 
@@ -228,6 +246,9 @@ namespace SolrSimpleQuery
 
         public async Task<dynamic> GetFieldValueByIdentifier<TIdentifierField>(FilterCriteria filterCriteria, string fieldName)
         {
+            if (filterCriteria == null)
+                return null;
+
             var resultList = await QueryGroupedDynamic<TIdentifierField>(filterCriteria);
             return resultList.GetFieldValueByIdentifier(
                     (TIdentifierField)Convert.ChangeType(filterCriteria.IdentifierFieldValue,
@@ -246,6 +267,9 @@ namespace SolrSimpleQuery
         public async Task<TResult> GetObjectByIdentifier<TIdentifierField, TResult>(FilterCriteria filterCriteria)
             where TResult : class, new()
         {
+            if (filterCriteria == null)
+                return null;
+
             var resultList = await QueryGrouped<TIdentifierField, TResult>(filterCriteria);
             return resultList.GetObjectByIdentifier(
                 (TIdentifierField)Convert.ChangeType(filterCriteria.IdentifierFieldValue, typeof(TIdentifierField)));
@@ -253,6 +277,9 @@ namespace SolrSimpleQuery
 
         public async Task<List<DynamicResult>> GetDynamicObjectByIdentifier<TIdentifierField>(FilterCriteria filterCriteria)
         {
+            if (filterCriteria == null)
+                return null;
+
             var resultList = await QueryGroupedDynamic<TIdentifierField>(filterCriteria);
             return resultList.GetObjectByIdentifier(
                 (TIdentifierField)Convert.ChangeType(filterCriteria.IdentifierFieldValue, typeof(TIdentifierField)));

@@ -9,7 +9,7 @@ namespace SolrSimpleQuery.Api
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.EnableCors(new EnableCorsAttribute("http://localhost:3000", "*", "*"));
+            //config.EnableCors(new EnableCorsAttribute("http://ssq.funda.localhost", "*", "*"));
 
             // Web API routes
             config.MapHttpAttributeRoutes();
